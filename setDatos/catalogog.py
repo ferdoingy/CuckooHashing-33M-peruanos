@@ -16,6 +16,17 @@ def crear_catalogos(semilla): #Se toma como parametro una seed que sirve para re
         apellidos.add(fake.last_name()) #Se generan nuevos apellidos para ampliar el set predeterminado
 
     return sorted(nombres), sorted(apellidos) #retorna los sets reordenados con los nombres nuevos generados
+
+#funcion para generar dni con un multiplicador
 def generar_dni(indice):
     numero = (MULTIPLICADOR*indice) % TOTAL_DNI #se genera un numero dni
     return f"{numero:08d}" 
+
+
+#funcion para generar el nombre completo
+def generar_nombre(rng, nombres, apellidos): #se toma un valor generador, un set de nombres y un set de apellidos
+
+    nombre1, nombre2 = rng.sample(nombres,2) #se toma al azar 2 nombres y se le asigna a nombre1 y nombre2 
+    apellido1, apellido2 = rng.sample(apellidos,2) #lo mismo que la anterior pero con los apellidos
+
+    return f"{nombre1} {nombre2}",f"{apellido1} {apellido2}" #se devuelve en forma de tupla el nombre completo
