@@ -57,6 +57,44 @@ def generar_ciudadano(indice, rng, nombres, apellidos):
         rng,nombres,apellidos
     )
     nacionalidad = rng.choices( #se realiza una eleccion aleatoria dentro del set de nacionalidades 
-        NACIONALIDADES, weights = [94, 2, 1, 1, 1, 0.5, 0.5] #se le define un peso para cada una de las nacionalidades
-            k = 1
+        NACIONALIDADES,
+        weights=[94, 2, 1, 1, 1, 0.5, 0.5], #se le define un peso para cada una de las nacionalidades asi sale
+        k=1 #se selecciona solo 1 de las nacionalidades
+    )[0]
+
+      # Lugar de nacimiento simulado.
+    nacimiento = rng.choice(UBICACIONES) #se selecciona de las ubicaciones para el lugar de naciomiento
+    lugar_nacimiento = (
+        f"{nacimiento[2]}, {nacimiento[0]}" #devuelve el distrito y el departamento en una tupla
     )
+
+    (
+        departamento,
+        provincia,
+        ciudad,
+        distrito,
+        ubicacion
+    ) = generar_ubicacion(rng) #se genera la ubicacion y se le asignan los valoeres que se retornan
+
+    # Genrerador de numero telefonicos
+    telefono = f"000{indice % 1_000_000:06d}"
+    # Generador de correo electronico
+    correo = f"ciudadano{dni}@example.com"
+    # Del set de ESTADOS_CIVILES se selecciona 1 al azar
+    estado_civil = rng.choice(ESTADOS_CIVILES)
+
+    return [
+        dni,
+        nombres,
+        apellidos,
+        nacionalidad,
+        lugar_nacimiento,
+        departamento,
+        provincia,
+        ciudad,
+        distrito,
+        ubicacion,
+        telefono,
+        correo,
+        estado_civil
+    ]
