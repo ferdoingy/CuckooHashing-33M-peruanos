@@ -36,7 +36,7 @@ def generar_ubicacion(rng): #se toma solo el generador
     departamento, provincia, ciudad, distrito = (
         rng.choice(UBICACIONES)
     )
-    via = rng.choide(TIPOS_VIA)
+    via = rng.choice(TIPOS_VIA)
     numero = rng.randint(1, 9999)
 
     #Direccion ficticia, no tomada de personas reales
@@ -56,11 +56,7 @@ def generar_ciudadano(indice, rng, nombres, apellidos):
     nombres, apellidos = generar_nombre(
         rng,nombres,apellidos
     )
-    nacionalidad = rng.choices( #se realiza una eleccion aleatoria dentro del set de nacionalidades 
-        NACIONALIDADES,
-        weights=[94, 2, 1, 1, 1, 0.5, 0.5], #se le define un peso para cada una de las nacionalidades asi sale
-        k=1 #se selecciona solo 1 de las nacionalidades
-    )[0]
+    nacionalidad = NACIONALIDADES
 
       # Lugar de nacimiento simulado.
     nacimiento = rng.choice(UBICACIONES) #se selecciona de las ubicaciones para el lugar de naciomiento
