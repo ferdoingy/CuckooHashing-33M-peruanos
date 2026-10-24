@@ -30,3 +30,33 @@ def generar_nombre(rng, nombres, apellidos): #se toma un valor generador, un set
     apellido1, apellido2 = rng.sample(apellidos,2) #lo mismo que la anterior pero con los apellidos
 
     return f"{nombre1} {nombre2}",f"{apellido1} {apellido2}" #se devuelve en forma de tupla el nombre completo
+
+#funcion para generar la direccion
+def generar_ubicacion(rng): #se toma solo el generador
+    departamento, provincia, ciudad, distrito = (
+        rng.choice(UBICACIONES)
+    )
+    via = rng.choide(TIPOS_VIA)
+    numero = rng.randint(1, 9999)
+
+    #Direccion ficticia, no tomada de personas reales
+    ubicacion = f"{via} Simulada {numero}"
+
+    return( #retorna los datos
+        departamento,
+        provincia,
+        ciudad,
+        distrito,
+        ubicacion
+    )
+def generar_ciudadano(indice, rng, nombres, apellidos):
+    #se llama a la funcion para generar el dni del ciudadano
+    dni = generar_dni(indice)
+    #se llama a la funcion para generar su nombre
+    nombres, apellidos = generar_nombre(
+        rng,nombres,apellidos
+    )
+    nacionalidad = rng.choices( #se realiza una eleccion aleatoria dentro del set de nacionalidades 
+        NACIONALIDADES, weights = [94, 2, 1, 1, 1, 0.5, 0.5] #se le define un peso para cada una de las nacionalidades
+            k = 1
+    )
