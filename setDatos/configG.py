@@ -65,3 +65,28 @@ TIPOS_VIA = [
     "Av.", "Jr.", "Calle", "Pasaje"
 ]
 
+NOMBRES_VIA = [
+    "Los Olivos", "Los Pinos", "Los Eucaliptos", "Los Cedros",
+    "Los Álamos", "Los Sauces", "Los Robles", "Los Nogales",
+    "Los Cipreses", "Los Abetos", "Los Fresnos", "Los Tilos",
+    "Los Laureles", "Los Jacarandás", "Los Magnolios",
+    "Los Girasoles", "Los Tulipanes", "Los Claveles",
+    "Los Jazmines", "Los Lirios", "28 de Julio", "9 de Diciembre",
+    "2 de Mayo", "7 de Junio",
+    "8 de Octubre", "29 de Junio",
+    "1 de Mayo", "30 de Agosto",
+    "Combate de Angamos", "Batalla de Ayacucho",
+    "Independencia", "La República",
+    "Los Libertadores", "Los Próceres",
+    "Los Héroes", "La Unión", "José de San Martín", "Simón Bolívar",
+    "Miguel Grau", "Francisco Bolognesi",
+    "Andrés Avelino Cáceres", "José Olaya",
+    "Túpac Amaru II", "Micaela Bastidas",
+    "María Parado de Bellido", "Francisco Pizarro",
+    "Ricardo Palma", "César Vallejo",
+    "José Carlos Mariátegui", "Abraham Valdelomar",
+    "José María Arguedas", "Jorge Basadre",
+    "Manuel González Prada", "Daniel Alcides Carrión",
+    "Hipólito Unanue", "Antonio Raimondi"
+]
+

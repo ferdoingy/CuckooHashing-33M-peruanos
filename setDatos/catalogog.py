@@ -37,10 +37,11 @@ def generar_ubicacion(rng): #se toma solo el generador
         rng.choice(UBICACIONES)
     )
     via = rng.choice(TIPOS_VIA)
+    nombres_via = rng.choice(NOMBRES_VIA)
     numero = rng.randint(1, 9999)
 
     #Direccion ficticia, no tomada de personas reales
-    ubicacion = f"{via} Simulada {numero}"
+    ubicacion = f"{via} {nombres_via} {numero}"
 
     return( #retorna los datos
         departamento,
@@ -75,7 +76,7 @@ def generar_ciudadano(indice, rng, nombres, apellidos):
     # Genrerador de numero telefonicos
     telefono = f"9{rng.randint(0, 99_999_999):08d}" #se genera un numero telefonico aleatorio de 9 digitos
     # Generador de correo electronico
-    correo = f"ciudadano{dni}@example.com"
+    correo = f"{nombres.replace(" ", "")}{dni}@example.com"
     # Del set de ESTADOS_CIVILES se selecciona 1 al azar
     estado_civil = rng.choice(ESTADOS_CIVILES)
 
