@@ -19,7 +19,7 @@ def crear_catalogos(semilla): #Se toma como parametro una seed que sirve para re
 
 #funcion para generar dni con un multiplicador
 def generar_dni(indice):
-    numero = (MULTIPLICADOR*indice) % TOTAL_DNI #se genera un numero dni
+    numero = (MULTIPLICADOR*indice + DESPLAZAMIENTO) % TOTAL_DNI #se genera un numero dni
     return f"{numero:08d}" 
 
 
@@ -73,7 +73,7 @@ def generar_ciudadano(indice, rng, nombres, apellidos):
     ) = generar_ubicacion(rng) #se genera la ubicacion y se le asignan los valoeres que se retornan
 
     # Genrerador de numero telefonicos
-    telefono = f"000{indice % 1_000_000:06d}"
+    telefono = f"9{rng.randint(0, 99_999_999):08d}" #se genera un numero telefonico aleatorio de 9 digitos
     # Generador de correo electronico
     correo = f"ciudadano{dni}@example.com"
     # Del set de ESTADOS_CIVILES se selecciona 1 al azar

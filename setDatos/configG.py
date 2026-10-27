@@ -9,6 +9,7 @@ TOTAL_DNI = 100_000_000 # para los 100 millones de combinaciones posibles para 8
 while True:
     MULTIPLICADOR = random.randint(1, 99_999_999) # para generar un número aleatorio entre 1 y 99 millones
 
+    DESPLAZAMIENTO = 18_472_613
     if math.gcd(MULTIPLICADOR, TOTAL_DNI) == 1: # si el máximo común divisor es 1, entonces son coprimos
         break # garantiza la unicidad de los DNIs
 
@@ -32,9 +33,7 @@ APELLIDOS_PERUANOS = [
     "Huanca", "Apaza", "Choque", "Yupanqui"
 ]
 
-NACIONALIDADES = [
-    "Peruana"
-]
+NACIONALIDADES = "Peruana"
 
 ESTADOS_CIVILES = [
     "Soltero/a",

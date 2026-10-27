@@ -28,8 +28,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    generar_dataset(
-        args.cantidad,
-        args.salida,
-        args.semilla
-    )
+    generar_dataset(args.cantidad, args.salida, args.semilla)
