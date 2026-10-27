@@ -8,7 +8,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--cantidad",
         type=int,
-        default=1000,
+        default=33000000,
         help="Cantidad de ciudadanos a generar"
     )
 
