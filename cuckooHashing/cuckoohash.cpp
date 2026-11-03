@@ -188,5 +188,90 @@ Persona leerPersona(istream& archivo) {
     return persona;
 }
 
+int main(int argc, char* argv[]) {
+    // Se esperan dos argumentos:
+    // argv[0]: nombre del ejecutable.
+    // argv[1]: ruta del archivo binario.
+    if (argc != 2) {
+        cerr << "Uso: lector.exe \"ruta/al/dataset.bin\"\n";
+        return 1; // Termina indicando un error.
+    }
+
+    // Permite capturar los errores lanzados durante la lectura.
+    try {
+        // Abre la ruta recibida como argumento.
+        // ios::binary evita las transformaciones propias del modo texto.
+        ifstream archivo(argv[1], ios::binary);
+
+        // Comprueba que el archivo se haya abierto correctamente.
+        if (!archivo.is_open()) {
+            cerr << "No se pudo abrir el archivo.\n";
+            return 1; // Termina porque no se puede continuar sin el archivo.
+        }
+
+        // Lee la cabecera y guarda el resultado.
+        // const impide modificar esta variable después de inicializarla.
+        const Cabecera cabecera = leerCabecera(archivo);
+
+        // Muestra el identificador leído.
+        cout << "Identificador: "
+             << cabecera.identificador << '\n';
+
+        // Muestra la versión del formato.
+        cout << "Version: "
+             << cabecera.version << '\n';
+
+        // Muestra cuántas personas anuncia la cabecera.
+        cout << "Cantidad de personas: "
+             << cabecera.cantidad_personas << '\n';
+
+        // El archivo está después de la cabecera.
+        // Esta llamada lee solamente la primera persona.
+        const Persona persona = leerPersona(archivo);
+
+        cout << "\nPrimera persona:\n"; // Título antes de mostrar sus datos.
+
+        // setw(8) fija un ancho mínimo de 8 caracteres para el DNI.
+        // setfill('0') rellena con ceros a la izquierda si faltan dígitos.
+        // Después se restaura el carácter de relleno a un espacio.
+        cout << "DNI: "
+             << setfill('0') << setw(8) << persona.dni
+             << setfill(' ') << '\n';
+
+        // Muestra el índice del primer nombre, no su texto.
+        cout << "Indice del primer nombre: "
+             << persona.nombre1 << '\n';
+
+        // Muestra el índice del segundo nombre.
+        cout << "Indice del segundo nombre: "
+             << persona.nombre2 << '\n';
+
+        // Muestra el índice del primer apellido.
+        cout << "Indice del primer apellido: "
+             << persona.apellido1 << '\n';
+
+        // Muestra el índice del segundo apellido.
+        cout << "Indice del segundo apellido: "
+             << persona.apellido2 << '\n';
+
+        // El teléfono ya es un valor numérico, no un índice del catálogo.
+        cout << "Telefono: "
+             << persona.telefono << '\n';
+
+        // Muestra el usuario del correo leído después de los 26 bytes fijos.
+        cout << "Usuario del correo: "
+             << persona.usuarioCorreo << '\n';
+
+    } catch (const exception& error) {
+        // Captura una excepción lanzada dentro del bloque try.
+        // Se recibe por referencia constante para evitar copiarla.
+        cerr << "Error: " << error.what() << '\n';
+
+        return 1; // Informa que el programa terminó con un error.
+    }
+
+    // El archivo se cierra automáticamente al destruirse su ifstream.
+    return 0;
+}
 
 
