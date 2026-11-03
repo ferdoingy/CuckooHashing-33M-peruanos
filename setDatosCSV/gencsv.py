@@ -1,5 +1,5 @@
 from configG import *
-from catalogog import *
+from setDatosCSV.setDatos.catalogog import *
 import csv # para guardar los datos en un archivo csv
 
 def generar_dataset(cantidad, ruta, semilla): # numero de ciudadanos que generaremos, ubicacion del csv y valor que permite repoducir los mismos datos aleatorios
