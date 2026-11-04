@@ -4,6 +4,7 @@
 #include <iomanip> //Dar un formato a lo que se imprime
 #include <stdexcept> //Crear errores para explicar algun problema
 #include <cstdint> //usar enteros con tamaños especificos
+#include <vector> //guardar a todas las personas leidas
 #include "Persona.h"
 
 using namespace std;
@@ -66,7 +67,7 @@ Cabecera leerCabecera(istream& archivo){
     cabecera.version = static_cast<uint32_t>(
         convertirLittleEndian(bytes + 4, 4)
     );
-    //Se hace lo mismo que el anterior pero con las posicion 5 a la 8
+    //Se hace lo mismo que el anterior pero con 8 bytes (posiciones 8 a 15)
     cabecera.cantidad_personas =
         convertirLittleEndian(bytes + 8, 8);
 
@@ -206,8 +207,19 @@ int main(int argc, char* argv[]) {
              << cabecera.cantidad_personas << '\n';
 
         // El archivo está después de la cabecera.
-        // Esta llamada lee solamente la primera persona.
-        const Persona persona = leerPersona(archivo);
+        // Se leen TODAS las personas al vector. reserve() pide la memoria
+        // una sola vez con el tamaño que anuncia la cabecera, así el vector
+        // no tiene que crecer y copiarse durante la carga.
+        vector<Persona> personas;
+        personas.reserve(cabecera.cantidad_personas);
+        for (uint64_t i = 0; i < cabecera.cantidad_personas; ++i) {
+            personas.push_back(leerPersona(archivo));
+        }
+
+        cout << "Personas cargadas: " << personas.size() << '\n';
+
+        // Se muestra la primera persona para comprobar la lectura.
+        const Persona& persona = personas.front();
 
         cout << "\nPrimera persona:\n"; // Título antes de mostrar sus datos.
 

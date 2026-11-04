@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint> //usar enteros con tamaños especificos
 #include <string> 
 
@@ -20,5 +21,5 @@ struct Persona{ //estructura que almacena la información de la persona
     uint8_t estadoCivil;
     uint8_t dominioCorreo;
 
-    string usuarioCorreo;
+    std::string usuarioCorreo; // std:: porque el header no debe depender de "using namespace std"
 };
