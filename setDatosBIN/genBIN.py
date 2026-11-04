@@ -35,6 +35,8 @@ def generar_dataset_bin(cantidad, ruta_bin, ruta_catalogos, semilla):
             if (i + 1) % 1_000_000 == 0:
                 print(f"Generados: {i+1:,} / {cantidad:,}")
 
+        archivo.write(buffer) # escribir lo que queda en el buffer
+
         escribir_catalogos(ruta_catalogos)
 
 
