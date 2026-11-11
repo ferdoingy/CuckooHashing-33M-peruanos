@@ -1,6 +1,0 @@
-# Dataset grande
-setDatos/dataset.csv
-
-# Archivos temporales de Python
-__pycache__/
-*.pyc
