@@ -17,6 +17,36 @@ class CuckooHash {
     uint32_t capacidad; // casillas de cada tabla
     vector<Entrada> tabla1;
     vector<Entrada> tabla2;
+    uint32_t cantidad = 0; // parejas guardadas
+
+    // bucle de desplazamientos; si falla, e queda con la pareja que quedo fuera
+    bool colocar(Entrada& e) {
+        for (int i = 0; i < 100; i++) {
+            swap(e, tabla1[hash1(e.dni)]); // entra a la tabla 1 y sale la que estaba
+            if (e.idx == VACIO) return true;
+            swap(e, tabla2[hash2(e.dni)]); // la que salio va a la tabla 2
+            if (e.idx == VACIO) return true;
+        }
+        return false;
+    }
+
+    // duplica la capacidad y reinserta todas las parejas
+    void rehash() {
+        vector<Entrada> todas;
+        for (Entrada e : tabla1) if (e.idx != VACIO) todas.push_back(e);
+        for (Entrada e : tabla2) if (e.idx != VACIO) todas.push_back(e);
+
+        bool ok = false;
+        while (!ok) {
+            capacidad *= 2;
+            tabla1.assign(capacidad, Entrada{0, VACIO});
+            tabla2.assign(capacidad, Entrada{0, VACIO});
+            ok = true;
+            for (Entrada e : todas) { // e es una copia
+                if (!colocar(e)) { ok = false; break; } // falla: se vuelve a duplicar
+            }
+        }
+    }
 
 public:
     CuckooHash(size_t n) {
@@ -41,16 +71,12 @@ public:
         return x % capacidad;
     }
 
-    // bucle de desplazamientos; false si no se ubico (falta rehash)
-    bool insertar(uint32_t dni, uint32_t idx) {
+    // inserta la pareja; hace rehash si la carga pasa del 45% o si colocar falla
+    void insertar(uint32_t dni, uint32_t idx) {
+        if (cantidad + 1 > 0.45 * 2 * capacidad) rehash();
         Entrada e{dni, idx};
-        for (int i = 0; i < 100; i++) {
-            swap(e, tabla1[hash1(e.dni)]); // entra a la tabla 1 y sale la que estaba
-            if (e.idx == VACIO) return true;
-            swap(e, tabla2[hash2(e.dni)]); // la que salio va a la tabla 2
-            if (e.idx == VACIO) return true;
-        }
-        return false;
+        while (!colocar(e)) rehash(); // reintenta con la pareja que quedo fuera
+        cantidad++;
     }
 
     // devuelve el idx de la persona o VACIO si no esta
