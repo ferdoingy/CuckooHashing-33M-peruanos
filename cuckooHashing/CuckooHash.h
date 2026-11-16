@@ -17,7 +17,7 @@ class CuckooHash {
     uint32_t capacidad; // casillas de cada tabla
     vector<Entrada> tabla1;
     vector<Entrada> tabla2;
-    uint32_t cantidad = 0; // parejas guardadas
+    uint32_t cantidad = 0; // parejas guardadas para calcular la carga
 
     // bucle de desplazamientos; si falla, e queda con la pareja que quedo fuera
     bool colocar(Entrada& e) {
@@ -55,9 +55,15 @@ public:
         tabla2.assign(capacidad, Entrada{0, VACIO});
     }
 
-    // metodo multiplicativo de Knuth
+    // hash entero de Thomas Wang
     uint32_t hash1(uint32_t dni) const {
-        return (dni * 2654435769u) % capacidad;
+        uint32_t x = dni;
+        x = (x ^ 61) ^ (x >> 16);
+        x *= 9;
+        x ^= x >> 4;
+        x *= 0x27d4eb2du;
+        x ^= x >> 15;
+        return x % capacidad;
     }
 
     // mezcla de Murmur
