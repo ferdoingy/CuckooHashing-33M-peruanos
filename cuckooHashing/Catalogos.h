@@ -82,3 +82,56 @@ inline void mostrarPersona(const Persona& p, const Catalogos& c) {
     cout << "Correo:              " << p.usuarioCorreo << '@' << c.dominiosCorreo[p.dominioCorreo] << '\n';
     cout << "Estado civil:        " << c.estadosCiviles[p.estadoCivil] << '\n';
 }
+
+// indice de texto en lista, o -1 si no esta
+inline int buscarEnCatalogo(const vector<string> &lista, const string &texto) // recorre la lista desde 0 - final
+{
+    for (size_t i = 0; i < lista.size(); i++) // En cuanto encuentra el elemento igual al texto
+    { 
+        if (lista[i] == texto) return i; // devuelve la pos
+    }
+    return -1; // no esta
+}
+
+// escribe "[NOMBRE] cantidad" y luego un valor por linea
+// lleva & para usar el mismo archivo abierto
+inline void escribirSeccion(ofstream& archivo, const string& nombre, const vector<string>& valores)
+{ // es la cabecera de la seccion [NOMBRES] 280 la cantidad sale de valores.size()
+    archivo << '[' << nombre << "] " << valores.size() << '\n';
+    for (const string& v : valores)
+    {
+        archivo << v << '\n'; // escribe cada valor en su propia linea
+    }
+}
+
+// escribe las 9 secciones en el mismo orden que genBIN.py
+inline void guardarCatalogos(const Catalogos& c, const string& ruta)
+{
+    ofstream archivo(ruta, ios::binary); // binary: saltos de linea '\n' como Python
+    // abre el archivo para escribir se borra y se escribe todo de nuevo
+    escribirSeccion(archivo, "NOMBRES", c.nombres);
+    escribirSeccion(archivo, "APELLIDOS", c.apellidos);
+    escribirSeccion(archivo, "NACIONALIDADES", c.nacionalidades);
+    escribirSeccion(archivo, "LUGARES_NACIMIENTO", c.lugaresNacimiento);
+    escribirSeccion(archivo, "UBICACIONES", c.ubicaciones);
+    escribirSeccion(archivo, "TIPOS_VIA", c.tiposVia);
+    escribirSeccion(archivo, "NOMBRES_VIA", c.nombresVia);
+    escribirSeccion(archivo, "ESTADOS_CIVILES", c.estadosCiviles);
+    escribirSeccion(archivo, "DOMINIOS_CORREO", c.dominiosCorreo);
+}
+
+// cambia las letras con tilde (UTF-8) por su version sin tilde
+inline string sinTildes(string s) {
+    const string con[] = {"á", "é", "í", "ó", "ú", "ñ", "ü", "Á", "É", "Í", "Ó", "Ú", "Ñ", "Ü"};
+    const string sin[] = {"a", "e", "i", "o", "u", "n", "u", "A", "E", "I", "O", "U", "N", "U"};
+    for (int i = 0; i < 14; i++)
+    {
+        size_t pos = s.find(con[i]); // busca donde aparece en el texto, si no aparece devuevle no encontrado
+        while (pos != string::npos)
+        {
+            s.replace(pos, con[i].size(), sin[i]);
+            pos = s.find(con[i], pos + 1);
+        }
+    }
+    return s;
+}
