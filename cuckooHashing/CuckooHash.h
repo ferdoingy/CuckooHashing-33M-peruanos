@@ -32,11 +32,11 @@ class CuckooHash {
 
     // duplica la capacidad y reinserta todas las parejas
     void rehash() {
-        vector<Entrada> todas;
-        for (Entrada e : tabla1) if (e.idx != VACIO) todas.push_back(e);
+        vector<Entrada> todas; // se crea un vector para llenar con todas las claves
+        for (Entrada e : tabla1) if (e.idx != VACIO) todas.push_back(e); // Agregamos las claves
         for (Entrada e : tabla2) if (e.idx != VACIO) todas.push_back(e);
 
-        bool ok = false;
+        bool ok = false; // bandera para 
         while (!ok) {
             capacidad *= 2;
             tabla1.assign(capacidad, Entrada{0, VACIO});
@@ -49,10 +49,11 @@ class CuckooHash {
     }
 
 public:
-    CuckooHash(size_t n) {
-        capacidad = n / 0.9 + 1;
-        tabla1.assign(capacidad, Entrada{0, VACIO});
-        tabla2.assign(capacidad, Entrada{0, VACIO});
+    CuckooHash(size_t n) { // n es la cantidad de personas que se van a guardar -> cache.size()
+                            // Sale del total que dice la cabecera del -bin
+        capacidad = n / 0.9 + 1; // Sale del factor de carga (alpha) mide que tan llenas estan las tablas
+        tabla1.assign(capacidad, Entrada{0, VACIO}); // alpha = parejas guardadas / casillas totales * 2 porque son 2 tablas
+        tabla2.assign(capacidad, Entrada{0, VACIO}); // alpha = n / 2m; m -> capacidad de tabla
     }
 
     // hash entero de Thomas Wang
