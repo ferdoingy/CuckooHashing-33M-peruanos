@@ -127,6 +127,19 @@ void registrar(Cache& cache, CuckooHash& tabla, Catalogos& c) {
     mostrarPersona(p, c);
 }
 
+// borra a la persona del .bin y del cuckoo
+void eliminar(Cache& cache, CuckooHash& tabla) {
+    uint32_t dni = leerNumero("DNI a eliminar: ", 1, 99999999); // lee el numero
+    uint32_t idx = tabla.buscar(dni); // lo busca
+    if (idx == VACIO) { // si no hay 
+        cout << "No existe registro con ese DNI\n";
+        return; // retorna
+    }
+    cache.marcarBorrado(idx); // primero en el disco
+    tabla.eliminar(dni);      // despues en el cuckoo
+    cout << "Persona eliminada\n";
+}
+
 int main() {
     try {
         Cache cache;
@@ -135,14 +148,14 @@ int main() {
 
         CuckooHash tabla(cache.size());
         for (uint32_t i = 0; i < cache.size(); i++) {
-            tabla.insertar(dnis[i], i); // pareja (dni, idx)
+            if (dnis[i] != DNI_BORRADO) tabla.insertar(dnis[i], i); // las marcadas no se insertan
         }
         cout << "Personas insertadas en el cuckoo\n";
 
         Catalogos catalogos = leerCatalogos(RUTA_CATALOGOS);
 
         while (true) {
-            string opcion = leerLinea("\n1) Buscar\n2) Registrar\n0) Salir\nOpcion: ");
+            string opcion = leerLinea("\n1) Buscar\n2) Registrar\n3) Eliminar\n0) Salir\nOpcion: ");
             if (opcion == "1") {
                 uint32_t dni = leerNumero("DNI a buscar: ", 1, 99999999);
                 uint32_t idx = tabla.buscar(dni); // posicion en la cache o VACIO
@@ -153,6 +166,8 @@ int main() {
                 }
             } else if (opcion == "2") {
                 registrar(cache, tabla, catalogos);
+            } else if (opcion == "3") {
+                eliminar(cache, tabla);
             } else if (opcion == "0") {
                 break;
             } else {

@@ -12,6 +12,9 @@ using namespace std;
 
 // cabecera (176 bytes): "DNIP" | version | total | inicio[10] | cantidad[10]
 // persona: 26 bytes fijos (el ultimo es el largo del correo) + usuario del correo
+const uint32_t DNI_BORRADO = UINT32_MAX; // marca en el .bin de persona eliminada
+const uint64_t POS_BORRADA = UINT64_MAX; // marca en la cache de persona eliminada
+
 class Cache {
     vector<uint64_t> posiciones; // posiciones[i] = byte donde empieza la persona i
     fstream archivo;             // queda abierto para leer y agregar personas despues
@@ -39,7 +42,8 @@ public:
             uint8_t largoCorreo = registro[25];
             archivo.ignore(largoCorreo); // se salta el correo
 
-            posiciones.push_back(pos);
+            posiciones.push_back(dni == DNI_BORRADO ? POS_BORRADA : pos); // agrega a las posiciones si es q esta borrado
+                                                                         // si no solo agrega la posicion
             pos += 26 + largoCorreo;
         }
         return dnis;
@@ -80,7 +84,7 @@ public:
     uint32_t agregar(const Persona& p)
     {
         archivo.clear(); // limpia errores de lecturas anteriores
-        archivo.seekp(0, ios::end); // pone la lectura al final porque se añade al final
+        archivo.seekp(0, ios::end); // pone la escritura al final porque se añade al final
         uint64_t pos = archivo.tellp(); // tellp indica donde esta el cursor para lectura o escritura
                                         // pos es un numero, el byte donde empieza la nueva persona
 
@@ -111,6 +115,16 @@ public:
         posiciones.push_back(pos); // aqui agrega a la cache el byte de donde se quedo la nueva persona
         return posiciones.size() - 1; // devuelve su indice - 1 porque empieza en 0
         // el ultimo esta en el 33 000 000 pero hay 33 000 001 - 1
+    }
+
+    // marca a la persona idx como borrada en el .bin y en la cache
+    void marcarBorrado(uint32_t idx) {
+        archivo.clear();
+        archivo.seekp(posiciones[idx]);       // byte donde empieza la persona
+        uint32_t marca = DNI_BORRADO;         // copia local para tomar su direccion
+        archivo.write((char*)&marca, 4);      // sobrescribe solo su DNI
+        archivo.flush();                      // se guarda en el disco ya inmediato
+        posiciones[idx] = POS_BORRADA;        // la marca tambien en la cache
     }
 
     size_t size() const

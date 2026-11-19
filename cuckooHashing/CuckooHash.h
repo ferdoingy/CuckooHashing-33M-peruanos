@@ -94,4 +94,22 @@ public:
         if (e2.idx != VACIO && e2.dni == dni) return e2.idx;
         return VACIO;
     }
+
+    // vacia la casilla del dni; devuelve false si no estaba
+    bool eliminar(uint32_t dni) {
+        Entrada &e1 = tabla1[hash1(dni)]; // calcula en que casilla de la tabla 1 esta ese DNI
+        if (e1.idx != VACIO && e1.dni == dni) // ¿Esta ahi el DNI?
+        {
+            e1 = Entrada{0, VACIO}; // lo marca como vacio
+            cantidad--; // resta 1 a las parejas guardadas para que el factor siga siendo correcto
+            return true; // si no se resta la funcion insertar creera que la tabla esta más llena
+        } //  Y cambiaria el rehash porque se haria antes
+        Entrada &e2 = tabla2[hash2(dni)];
+        if (e2.idx != VACIO && e2.dni == dni) {
+            e2 = Entrada{0, VACIO};
+            cantidad--;
+            return true;
+        }
+        return false; // no estaba
+    }
 };
