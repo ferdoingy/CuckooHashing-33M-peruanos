@@ -68,7 +68,7 @@ uint32_t elegirDeLista(const string& titulo, vector<string>& lista, bool permite
     }
     if (permiteAgregar && lista.size() < maximo) cout << "  0) Agregar nuevo\n"; // si la lista no esta llena entonces se permite agregar nuevo
 
-    uint32_t opcion = leerNumero("Opcion: ", permiteAgregar ? 0 : 1, lista.size()); // si el bool es true return 0 
+    uint32_t opcion = leerNumero("Opcion: ", (permiteAgregar && lista.size() < maximo) ? 0 : 1, lista.size()); // 0 solo si se puede agregar
     if (opcion > 0) return opcion - 1;
 
     string nuevo; // guarda lo que lee en departamento, provincia, ciudad, distrito
@@ -83,6 +83,48 @@ uint32_t elegirDeLista(const string& titulo, vector<string>& lista, bool permite
     lista.push_back(nuevo);
     guardarCatalogos(c, RUTA_CATALOGOS); // guarda el catalogo con el nuevo valor
     return lista.size() - 1; // devuelve el ultimo indice
+}
+
+// pide los datos de una persona nueva, la guarda en el .bin y en el cuckoo
+void registrar(Cache& cache, CuckooHash& tabla, Catalogos& c) {
+    uint32_t dni = leerNumero("DNI: ", 1, 99999999);
+    if (tabla.buscar(dni) != VACIO) {
+        cout << "Ya existe una persona con ese DNI\n";
+        return;
+    }
+
+    Persona p;
+    p.dni = dni;
+    p.nombre1   = leerDeCatalogo("Primer nombre: ", c.nombres, 65535, c);
+    p.nombre2   = leerDeCatalogo("Segundo nombre: ", c.nombres, 65535, c);
+    p.apellido1 = leerDeCatalogo("Apellido paterno: ", c.apellidos, 65535, c);
+    p.apellido2 = leerDeCatalogo("Apellido materno: ", c.apellidos, 65535, c);
+    p.nacionalidad = 0; // Peruana
+
+    p.lugarNacimiento = elegirDeLista("Lugar de nacimiento (nuevo: Ciudad, Departamento):", c.lugaresNacimiento, true, 255, c, false);
+    p.ubicacion = elegirDeLista("Ubicacion:", c.ubicaciones, true, 255, c, true);
+    p.tipoVia   = elegirDeLista("Tipo de via:", c.tiposVia, false, 255, c, false);
+    p.nombreVia = elegirDeLista("Nombre de via:", c.nombresVia, true, 255, c, false);
+
+    p.numeroVia = leerNumero("Numero de via (1-9999): ", 1, 9999);
+    p.telefono  = leerNumero("Telefono (9 digitos, empieza en 9): ", 900000000, 999999999);
+    p.estadoCivil = elegirDeLista("Estado civil:", c.estadosCiviles, false, 255, c, false);
+    p.dominioCorreo = 0; // example.com
+
+    // correo: nombres sin tildes ni espacios + dni de 8 digitos
+    string d = to_string(dni);
+    d = string(8 - d.size(), '0') + d; // 8 digitos
+    string nombres = sinTildes(c.nombres[p.nombre1] + c.nombres[p.nombre2]);
+    string sinEspacios;
+    for (char ch : nombres) {
+        if (ch != ' ') sinEspacios += ch;
+    }
+    p.usuarioCorreo = sinEspacios + d;
+
+    uint32_t idx = cache.agregar(p); // escribe al final del .bin
+    tabla.insertar(p.dni, idx);      // {dni, idx} en el cuckoo
+    cout << "Persona registrada\n";
+    mostrarPersona(p, c);
 }
 
 int main() {
@@ -100,7 +142,7 @@ int main() {
         Catalogos catalogos = leerCatalogos(RUTA_CATALOGOS);
 
         while (true) {
-            string opcion = leerLinea("\n1) Buscar\n0) Salir\nOpcion: ");
+            string opcion = leerLinea("\n1) Buscar\n2) Registrar\n0) Salir\nOpcion: ");
             if (opcion == "1") {
                 uint32_t dni = leerNumero("DNI a buscar: ", 1, 99999999);
                 uint32_t idx = tabla.buscar(dni); // posicion en la cache o VACIO
@@ -109,6 +151,8 @@ int main() {
                 } else {
                     mostrarPersona(cache.leer(idx), catalogos); // lee la persona del .bin
                 }
+            } else if (opcion == "2") {
+                registrar(cache, tabla, catalogos);
             } else if (opcion == "0") {
                 break;
             } else {
