@@ -6,6 +6,7 @@
 #include "Cache.h"
 #include "CuckooHash.h"
 #include "Catalogos.h"
+#include <chrono>
 
 using namespace std;
 
@@ -121,9 +122,13 @@ void registrar(Cache& cache, CuckooHash& tabla, Catalogos& c) {
     }
     p.usuarioCorreo = sinEspacios + d;
 
+    auto inicioRegistrar = chrono::high_resolution_clock::now();
     uint32_t idx = cache.agregar(p); // escribe al final del .bin
     tabla.insertar(p.dni, idx);      // {dni, idx} en el cuckoo
+    auto finRegistrar = chrono::high_resolution_clock::now();
+
     cout << "Persona registrada\n";
+    cout << "Tiempo de registro: " << chrono::duration_cast<chrono::microseconds>(finRegistrar - inicioRegistrar).count() << " us\n";
     mostrarPersona(p, c);
 }
 
