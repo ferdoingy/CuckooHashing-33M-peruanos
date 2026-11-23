@@ -279,7 +279,7 @@ Tania
 Wendy
 Yanet
 Zoila
-[APELLIDOS] 248
+[APELLIDOS] 250
 Quispe
 Flores
 Sánchez
@@ -528,6 +528,8 @@ Sangama
 Tananta
 Cachique
 Amasifuén
+Rondon
+Ynocente
 [NACIONALIDADES] 1
 Peruana
 [LUGARES_NACIMIENTO] 9

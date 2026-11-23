@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <chrono>
 #include "Cache.h"
 #include "CuckooHash.h"
 #include "Catalogos.h"
@@ -7,10 +8,18 @@
 
 using namespace std;
 
+// nanosegundos desde inicio hasta ahora
+inline long long nsDesde(chrono::steady_clock::time_point inicio) {
+    return chrono::duration_cast<chrono::nanoseconds>(chrono::steady_clock::now() - inicio).count();
+}
+
 // busca un DNI y muestra a la persona
 inline void buscar(CuckooHash& tabla, Cache& cache, const Catalogos& c) {
     uint32_t dni = leerNumero("DNI a buscar: ", 1, 99999999);
+    auto inicio = chrono::steady_clock::now();
     uint32_t idx = tabla.buscar(dni); // posicion en la cache o VACIO
+    long long tiempo = nsDesde(inicio); // solo la busqueda en el cuckoo
+    cout << "|-Tiempo de busqueda: " << tiempo << " ns\n";
     if (idx == VACIO) {
         cout << "No existe registro con ese DNI\n";
     } else {
@@ -55,8 +64,13 @@ inline void registrar(Cache& cache, CuckooHash& tabla, Catalogos& c) {
     p.usuarioCorreo = sinEspacios + d;
 
     uint32_t idx = cache.agregar(p); // escribe al final del .bin
+    uint64_t antes = tabla.desplazamientos;
+    auto inicio = chrono::steady_clock::now();
     tabla.insertar(p.dni, idx);      // {dni, idx} en el cuckoo
+    long long tiempo = nsDesde(inicio); // solo la insercion en el cuckoo
     cout << "Persona registrada\n";
+    cout << "|-Tiempo de insercion: " << tiempo << " ns\n";
+    cout << "|-Desplazamientos: " << tabla.desplazamientos - antes << "\n";
     mostrarPersona(p, c);
 }
 
@@ -69,6 +83,9 @@ inline void eliminar(Cache& cache, CuckooHash& tabla) {
         return; // retorna
     }
     cache.marcarBorrado(idx); // primero en el disco
+    auto inicio = chrono::steady_clock::now();
     tabla.eliminar(dni);      // despues en el cuckoo
+    long long tiempo = nsDesde(inicio); // solo la eliminacion en el cuckoo
     cout << "Persona eliminada\n";
+    cout << "|-Tiempo de eliminacion: " << tiempo << " ns\n";
 }

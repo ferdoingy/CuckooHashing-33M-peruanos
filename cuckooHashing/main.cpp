@@ -21,6 +21,8 @@ int main() {
             if (dnis[i] != DNI_BORRADO) tabla.insertar(dnis[i], i); // las marcadas no se insertan
         }
         cout << "Personas insertadas en el cuckoo\n";
+        cout << "-Colisiones: " << tabla.colisiones << "\n";
+        cout << "-Desplazamientos totales: " << tabla.desplazamientos << "\n";
 
         Catalogos catalogos = leerCatalogos(RUTA_CATALOGOS);
 

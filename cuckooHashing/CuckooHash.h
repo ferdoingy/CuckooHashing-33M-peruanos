@@ -24,8 +24,10 @@ class CuckooHash {
         for (int i = 0; i < 100; i++) {
             swap(e, tabla1[hash1(e.dni)]); // entra a la tabla 1 y sale la que estaba
             if (e.idx == VACIO) return true;
+            desplazamientos++; // una pareja fue movida
             swap(e, tabla2[hash2(e.dni)]); // la que salio va a la tabla 2
             if (e.idx == VACIO) return true;
+            desplazamientos++;
         }
         return false;
     }
@@ -36,7 +38,7 @@ class CuckooHash {
         for (Entrada e : tabla1) if (e.idx != VACIO) todas.push_back(e); // Agregamos las claves
         for (Entrada e : tabla2) if (e.idx != VACIO) todas.push_back(e);
 
-        bool ok = false; // bandera para 
+        bool ok = false; // bandera para
         while (!ok) {
             capacidad *= 2;
             tabla1.assign(capacidad, Entrada{0, VACIO});
@@ -49,6 +51,9 @@ class CuckooHash {
     }
 
 public:
+    uint64_t colisiones = 0;      // inserciones cuya casilla de destino estaba ocupada
+    uint64_t desplazamientos = 0; // parejas movidas
+
     CuckooHash(size_t n) { // n es la cantidad de personas que se van a guardar -> cache.size()
                             // Sale del total que dice la cabecera del -bin
         capacidad = n / 0.9 + 1; // Sale del factor de carga (alpha) mide que tan llenas estan las tablas
@@ -81,6 +86,7 @@ public:
     // inserta la pareja; hace rehash si la carga pasa del 45% o si colocar falla
     void insertar(uint32_t dni, uint32_t idx) {
         if (cantidad + 1 > 0.45 * 2 * capacidad) rehash();
+        if (tabla1[hash1(dni)].idx != VACIO) colisiones++; // su casilla de destino esta ocupada
         Entrada e{dni, idx};
         while (!colocar(e)) rehash(); // reintenta con la pareja que quedo fuera
         cantidad++;
